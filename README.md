@@ -48,18 +48,24 @@ any folder but GOPATH.
 
 # Clone into your workspace
 
+```bash
 $ git clone https://github.com/Kelvinmijaya/kelvin-rest-api.git
+```
 
-#move to project $ cd kelvin-rest-api
+#move to project
+
+```bash
+$ cd kelvin-rest-api
+```
 
 # Run the application
 
+```bash
 $ go run app/server.go
+```
 
 # Execute the call in another terminal
 
+```bash
 $ curl localhost:9090/
-
-```
-
 ```
