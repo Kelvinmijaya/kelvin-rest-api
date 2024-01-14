@@ -1,10 +1,14 @@
-# go-clean-arch
+# kelvin-rest-api
 
 ## Description
 
-- Tech Stack:
-  > Golang Echo Framework Go Clean Code Architecture (ref:
-  > https://github.com/bxcodec/go-clean-arch)
+Tech Stack:
+
+- Golang
+- Echo Framework
+- Go Clean Code Architecture (ref: https://github.com/bxcodec/go-clean-arch)
+- Viper
+- Postgres
 
 Rule of Clean Architecture by Uncle Bob
 
@@ -39,7 +43,7 @@ This project has 4 Domain layer :
 
 ### How To Run This Project
 
-> Make Sure you already install postgres
+> Make Sure you already have goland and postgres
 
 Since the project already use Go Module, I recommend to put the source code in
 any folder but GOPATH.
