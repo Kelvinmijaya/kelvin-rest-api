@@ -30,8 +30,8 @@ func NewUserHandler(e *echo.Echo, uu domain.UserUsecase) {
 
 // Login will try to check the user is valid or not
 func (a *UserHandler) Login(c echo.Context) (err error) {
-	email := c.Param("email")
-	password := c.Param("password")
+	email := c.FormValue("email")
+	password := c.FormValue("password")
 
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, err.Error())

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
@@ -27,8 +26,5 @@ func (u *userUsecase) Login(c context.Context, email string, password string) (e
 	// TODO: Generate
 
 	err = u.userRepo.Login(ctx, email, password)
-	if err != nil {
-		log.Fatal(err)
-	}
 	return
 }

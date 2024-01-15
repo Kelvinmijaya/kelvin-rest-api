@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
 )
@@ -16,15 +17,16 @@ func NewPostgresUserRepository(conn *sql.DB) domain.UserRepository {
 }
 
 func (m *postgresUserRepository) Login(ctx context.Context, email string, password string) (err error) {
-	query := `SELECT id, email, name FROM users WHERE email=$1 AND password=$2`
+	var rname string
+	var rid int64
+	var remail string
 
-	rows, err := m.Conn.Query(query, email, password)
+	sqlStatement := `SELECT id, email, name FROM users WHERE email=$1 AND password=$2`
 
-	if err != nil {
-		return err
+	err = m.Conn.QueryRow(sqlStatement, email, password).Scan(&rid, &remail, &rname)
+	if err != nil || rid == 0 {
+		return errors.New("user not found")
 	}
-
-	defer rows.Close()
 
 	return
 }
