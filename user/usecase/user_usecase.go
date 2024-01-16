@@ -19,12 +19,13 @@ func NewUserUsecase(a domain.UserRepository, timeout time.Duration) domain.UserU
 	}
 }
 
-func (u *userUsecase) Login(c context.Context, email string, password string) (err error) {
+func (u *userUsecase) Login(c context.Context, email string, password string, m *domain.User) (err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	// TODO: Generate
-
-	err = u.userRepo.Login(ctx, email, password)
+	err = u.userRepo.Login(ctx, email, password, m)
+	if err != nil {
+		return
+	}
 	return
 }

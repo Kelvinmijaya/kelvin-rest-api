@@ -11,7 +11,7 @@ type Article struct {
 	Title     string    `json:"title" validate:"required"`
 	URL       string    `json:"url" validate:"required"`
 	Content   string    `json:"content" validate:"required"`
-	Type			string    `json:"type" validate:"required"`
+	Type      string    `json:"type" validate:"required"`
 	UpdatedAt time.Time `json:"updated_at"`
 	CreatedAt time.Time `json:"created_at"`
 }

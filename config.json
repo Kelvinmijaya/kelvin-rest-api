@@ -12,5 +12,9 @@
     "user": "postgres",
     "pass": "root",
     "name": "web-api"
+  },
+  "jwt": {
+    "secret": "lovetika3623",
+    "refreshSecret": "lovemijay3623"
   }
 }
