@@ -12,8 +12,6 @@ type User struct {
 type UserUsecase interface {
 	// Fetch(ctx context.Context, id int64) (User, error)
 	Login(ctx context.Context, email string, password string, u *User) error
-	// Auth(ctx context.Context) (bool, error)
-	// Logout(ctx context.Context, id int64) (User, error)
 	// Delete(ctx context.Context, id int64) error
 }
 

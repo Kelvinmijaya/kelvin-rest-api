@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type postgresUserRepository struct {
@@ -20,12 +21,18 @@ func (m *postgresUserRepository) Login(ctx context.Context, email string, passwo
 	var rid int64
 	var rname string
 	var remail string
+	var rPassword string
 
-	sqlStatement := `SELECT id, email, name FROM users WHERE email=$1 AND password=$2`
+	sqlStatement := `SELECT id, email, name, password FROM users WHERE email=$1`
 
-	err = m.Conn.QueryRowContext(ctx, sqlStatement, email, password).Scan(&rid, &remail, &rname)
+	err = m.Conn.QueryRowContext(ctx, sqlStatement, email).Scan(&rid, &remail, &rname, &rPassword)
 	if err != nil || rid == 0 {
 		return errors.New("user not found")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(rPassword), []byte(password))
+	if err != nil {
+		return errors.New("wrong password")
 	}
 
 	u.ID = rid

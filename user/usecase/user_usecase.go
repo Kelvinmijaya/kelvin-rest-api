@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"errors"
+	"net/mail"
 	"time"
 
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
@@ -23,9 +25,28 @@ func (u *userUsecase) Login(c context.Context, email string, password string, m 
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
+	// check valid email and password
+	var ok bool
+	if ok, err = loginValidator(email, password); !ok {
+		return err
+	}
+
 	err = u.userRepo.Login(ctx, email, password, m)
 	if err != nil {
-		return
+		return err
 	}
+
 	return
+}
+
+func loginValidator(email string, password string) (bool, error) {
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		return false, errors.New("email is not valid")
+	}
+
+	if len([]rune(password)) < 4 {
+		return false, errors.New("password minimum 4 character")
+	}
+	return true, nil
 }

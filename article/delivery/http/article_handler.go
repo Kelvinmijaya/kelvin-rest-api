@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
+	auth "github.com/Kelvinmijaya/kelvin-rest-api/user/delivery/http/middleware"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	validator "gopkg.in/go-playground/validator.v9"
@@ -24,8 +26,13 @@ func NewArticleHandler(e *echo.Echo, us domain.ArticleUsecase) {
 	handler := &ArticleHandler{
 		AUsecase: us,
 	}
+
+	// Restricted group
+	r := e.Group("/r")
+	r.Use(echojwt.WithConfig(auth.GetJWTMiddlewareConfig()))
+	r.Use(auth.TokenRefresherMiddleware)
+	r.POST("/articles", handler.Store)
 	// e.GET("/articles", handler.FetchArticle)
-	e.POST("/articles", handler.Store)
 	// e.GET("/articles/:id", handler.GetByID)
 	// e.DELETE("/articles/:id", handler.Delete)
 }

@@ -37,13 +37,30 @@ func GetJWTMiddlewareConfig() echojwt.Config {
 			return new(Claims)
 		},
 		SigningKey:  []byte(GetJWTSecret()),
-		TokenLookup: "cookie:access-token", // "<source>:<name>"
+		TokenLookup: "cookie:" + accessTokenCookieName, // "<source>:<name>"
 		ErrorHandler: func(c echo.Context, err error) error {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Please provide valid credentials")
 		},
 	}
 
 	return config
+}
+
+func LogoutTokenSetCookies(c echo.Context) (bool, error) {
+	cookie := new(http.Cookie)
+	cookie.Name = accessTokenCookieName
+	cookie.Value = ""
+	cookie.MaxAge = -1
+	cookie.Path = "/"
+	c.SetCookie(cookie)
+
+	cookie.Name = refreshTokenCookieName
+	c.SetCookie(cookie)
+
+	cookie.Name = "user"
+	c.SetCookie(cookie)
+
+	return true, nil
 }
 
 // GenerateTokensAndSetCookies generates jwt token and saves it to the http-only cookie.
@@ -60,6 +77,8 @@ func GenerateTokensAndSetCookies(c echo.Context, us *domain.User) error {
 	if err != nil {
 		return err
 	}
+
+	//Refresh Token
 	setTokenCookie(refreshTokenCookieName, refreshToken, exp, c)
 	return nil
 }
@@ -84,7 +103,7 @@ func generateToken(us *domain.User, expirationTime time.Time, secret []byte) (st
 	claims := &Claims{
 		Name: us.Name,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
 
@@ -132,16 +151,18 @@ func JWTErrorChecker(err error, c echo.Context) error {
 // TokenRefresherMiddleware middleware, which refreshes JWT tokens if the access token is about to expire.
 func TokenRefresherMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// If the user is not authenticated (no user token data in the context), don't do anything.
 
+		// If the user is not authenticated (no user token data in the context), don't do anything.
 		if c.Get("user") == nil {
 			c.Response().Writer.WriteHeader(http.StatusUnauthorized)
 			return echo.NewHTTPError(http.StatusUnauthorized, "Please provide valid credentials")
 		}
+
 		// Gets user token from the context.
 		u := c.Get("user").(*jwt.Token)
-
 		claims := u.Claims.(*Claims)
+
+		// fmt.Println(time.Until(claims.RegisteredClaims.ExpiresAt))
 
 		// We ensure that a new token is not issued until enough time has elapsed.
 		// In this case, a new token will only be issued if the old token is within

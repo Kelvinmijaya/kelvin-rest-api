@@ -5,7 +5,6 @@ import (
 
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
 	auth "github.com/Kelvinmijaya/kelvin-rest-api/user/delivery/http/middleware"
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -28,20 +27,7 @@ func NewUserHandler(e *echo.Echo, uu domain.UserUsecase) {
 	}
 
 	e.POST("/login", handler.Login)
-
-	// Restricted group
-	r := e.Group("/r")
-	r.Use(echojwt.WithConfig(auth.GetJWTMiddlewareConfig()))
-	// r.Use(auth.TokenRefresherMiddleware)
-	r.GET("", restricted)
-}
-
-// Test only
-func restricted(c echo.Context) error {
-	// user := c.Get("user").(*jwt.Token)
-	// claims := user.Claims.(*jwtCustomClaims)
-	// name := claims.Name
-	return c.String(http.StatusOK, "Welcome !")
+	e.POST("/logout", handler.Logout)
 }
 
 // Login will try to check the user is valid or not
@@ -54,15 +40,11 @@ func (a *UserHandler) Login(c echo.Context) (err error) {
 
 	email := c.FormValue("email")
 	password := c.FormValue("password")
-
-	// TODO: check valid email and password
-	// var ok bool
-	// if ok, err = isRequestValid(&user); !ok {
-	// 	return c.JSON(http.StatusBadRequest, err.Error())
-	// }
-
 	ctx := c.Request().Context()
+
+	// Usecase Login
 	err = a.UUsecase.Login(ctx, email, password, &user)
+
 	if err != nil {
 		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
 	}
@@ -74,6 +56,14 @@ func (a *UserHandler) Login(c echo.Context) (err error) {
 	}
 
 	return c.JSON(http.StatusCreated, ResponseSuccess{Message: "Success Sign in!"})
+}
+
+func (a *UserHandler) Logout(c echo.Context) (err error) {
+	_, err = auth.LogoutTokenSetCookies(c)
+	if err != nil {
+		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+	}
+	return c.JSON(http.StatusCreated, ResponseSuccess{Message: "Success Logout!"})
 }
 
 func getStatusCode(err error) int {
