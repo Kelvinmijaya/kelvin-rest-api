@@ -55,7 +55,7 @@ func (a *UserHandler) Login(c echo.Context) (err error) {
 		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, ResponseSuccess{Message: "Success Sign in!"})
+	return c.JSON(http.StatusOK, ResponseSuccess{Message: "Success Sign in!"})
 }
 
 func (a *UserHandler) Logout(c echo.Context) (err error) {
@@ -63,7 +63,7 @@ func (a *UserHandler) Logout(c echo.Context) (err error) {
 	if err != nil {
 		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
 	}
-	return c.JSON(http.StatusCreated, ResponseSuccess{Message: "Success Logout!"})
+	return c.JSON(http.StatusOK, ResponseSuccess{Message: "Success Logout!"})
 }
 
 func getStatusCode(err error) int {

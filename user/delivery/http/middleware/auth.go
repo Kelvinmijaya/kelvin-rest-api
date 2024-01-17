@@ -31,6 +31,7 @@ func GetRefreshJWTSecret() string {
 	return jwtRefreshSecretKey
 }
 
+// JWT Middleware Config to check valid token
 func GetJWTMiddlewareConfig() echojwt.Config {
 	config := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
@@ -46,6 +47,7 @@ func GetJWTMiddlewareConfig() echojwt.Config {
 	return config
 }
 
+// Function to clear out access token and refresh token
 func LogoutTokenSetCookies(c echo.Context) (bool, error) {
 	cookie := new(http.Cookie)
 	cookie.Name = accessTokenCookieName
@@ -55,9 +57,6 @@ func LogoutTokenSetCookies(c echo.Context) (bool, error) {
 	c.SetCookie(cookie)
 
 	cookie.Name = refreshTokenCookieName
-	c.SetCookie(cookie)
-
-	cookie.Name = "user"
 	c.SetCookie(cookie)
 
 	return true, nil
@@ -71,7 +70,7 @@ func GenerateTokensAndSetCookies(c echo.Context, us *domain.User) error {
 	}
 
 	setTokenCookie(accessTokenCookieName, accessToken, exp, c)
-	setUserCookie(us, exp, c)
+
 	// We generate here a new refresh token and saving it to the cookie.
 	refreshToken, exp, err := generateRefreshToken(us)
 	if err != nil {
@@ -132,16 +131,6 @@ func setTokenCookie(name, token string, expiration time.Time, c echo.Context) {
 	c.SetCookie(cookie)
 }
 
-// Purpose of this cookie is to store the user's name.
-func setUserCookie(user *domain.User, expiration time.Time, c echo.Context) {
-	cookie := new(http.Cookie)
-	cookie.Name = "user"
-	cookie.Value = user.Name
-	cookie.Expires = expiration
-	cookie.Path = "/"
-	c.SetCookie(cookie)
-}
-
 // JWTErrorChecker will be executed when user try to access a protected path.
 func JWTErrorChecker(err error, c echo.Context) error {
 	// Redirects to the signIn form.
@@ -155,19 +144,18 @@ func TokenRefresherMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		// If the user is not authenticated (no user token data in the context), don't do anything.
 		if c.Get("user") == nil {
 			c.Response().Writer.WriteHeader(http.StatusUnauthorized)
-			return echo.NewHTTPError(http.StatusUnauthorized, "Please provide valid credentials")
 		}
 
 		// Gets user token from the context.
 		u := c.Get("user").(*jwt.Token)
 		claims := u.Claims.(*Claims)
-
-		// fmt.Println(time.Until(claims.RegisteredClaims.ExpiresAt))
+		expires := claims.RegisteredClaims.ExpiresAt
 
 		// We ensure that a new token is not issued until enough time has elapsed.
 		// In this case, a new token will only be issued if the old token is within
 		// 15 mins of expiry.
-		if claims.RegisteredClaims.ExpiresAt.Sub(time.Now()) < 15*time.Minute {
+		//lint:ignore S1024 ingore this for now
+		if expires.Sub(time.Now()) < 15*time.Minute {
 			// Gets the refresh token from the cookie.
 			rc, err := c.Cookie(refreshTokenCookieName)
 			if err == nil && rc != nil {
