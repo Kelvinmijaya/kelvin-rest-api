@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -22,9 +23,18 @@ import (
 )
 
 func init() {
-	// Config Init
-	viper.SetConfigFile(`config.json`)
+	// Set viper path and read configuration
+	viper.AddConfigPath("./config")
+	if os.Getenv("ENV") == "PRODUCTION" {
+		viper.SetConfigName("config")
+		viper.SetConfigType("json")
+	} else {
+		viper.SetConfigName("devconfig")
+		viper.SetConfigType("json")
+	}
 	err := viper.ReadInConfig()
+
+	// Handle errors reading the config file
 	if err != nil {
 		panic(err)
 	}
@@ -41,9 +51,11 @@ func main() {
 	dbUser := viper.GetString(`database.user`)
 	dbPass := viper.GetString(`database.pass`)
 	dbName := viper.GetString(`database.name`)
+	dbSSLmode := viper.GetString(`database.sslmode`)
 	fmt.Sprintln(dbName)
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		dbHost, dbPort, dbUser, dbPass, dbName)
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		dbHost, dbPort, dbUser, dbPass, dbName, dbSSLmode)
+
 	db, err := sql.Open("postgres", psqlInfo)
 
 	if err != nil {
@@ -81,6 +93,11 @@ func main() {
 	})
 
 	// Setup Server Address
-	serverAddr := viper.GetString(`server.address`)
-	e.Logger.Fatal(e.Start(serverAddr))
+	serverAddr := os.Getenv("PORT")
+	if serverAddr == "" {
+		log.Fatal("$PORT must be set")
+	}
+
+	e.Logger.Fatal(e.Start(":" + serverAddr))
+
 }

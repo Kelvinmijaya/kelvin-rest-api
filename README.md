@@ -43,7 +43,11 @@ This project has 4 Domain layer :
 
 ### How To Run This Project
 
-> Make Sure you already have goland and postgres
+> Make Sure you already have goland and postgres & run command below
+```bash
+$ export ENV=DEV 
+$ export PORT=9090 
+```
 
 Since the project already use Go Module, I recommend to put the source code in
 any folder but GOPATH.
