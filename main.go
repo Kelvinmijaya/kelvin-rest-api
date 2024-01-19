@@ -24,13 +24,11 @@ import (
 
 func init() {
 	// Set viper path and read configuration
-	viper.AddConfigPath("./config")
+	viper.AddConfigPath("./conf/")
 	if os.Getenv("ENV") == "PRODUCTION" {
-		viper.SetConfigName("config")
-		viper.SetConfigType("json")
+		viper.SetConfigFile("config.json")
 	} else {
-		viper.SetConfigName("devconfig")
-		viper.SetConfigType("json")
+		viper.SetConfigFile("devconfig.json")
 	}
 	err := viper.ReadInConfig()
 
