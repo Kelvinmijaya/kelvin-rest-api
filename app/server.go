@@ -24,7 +24,7 @@ import (
 
 func init() {
 	// Set viper path and read configuration
-	viper.AddConfigPath("./config")
+	viper.AddConfigPath("../config")
 	if os.Getenv("ENV") == "PRODUCTION" {
 		viper.SetConfigName("config")
 		viper.SetConfigType("json")
