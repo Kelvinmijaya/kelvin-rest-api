@@ -1,2 +1,4 @@
-# config
 /config
+.DS_Store
+engine
+bin/
