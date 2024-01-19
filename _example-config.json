@@ -1,0 +1,20 @@
+{
+  "debug": true,
+  "server": {
+    "address": "localhost:9090"
+  },
+  "context": {
+    "timeout": 2
+  },
+  "database": {
+    "host": "localhost",
+    "port": "5432",
+    "user": "root",
+    "pass": "root",
+    "name": "postgres"
+  },
+  "jwt": {
+    "secret": "yoursecret",
+    "refreshSecret": "yoursecret"
+  }
+}
