@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"time"
 
+	configs "github.com/Kelvinmijaya/kelvin-rest-api/config"
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	"github.com/spf13/viper"
 )
 
 type Claims struct {
@@ -22,12 +22,12 @@ const (
 )
 
 func GetJWTSecret() string {
-	jwtSecretKey := viper.GetString(`jwt.secret`)
+	jwtSecretKey := configs.EnvConfigs.JWTSecret
 	return jwtSecretKey
 }
 
 func GetRefreshJWTSecret() string {
-	jwtRefreshSecretKey := viper.GetString(`jwt.refreshSecret`)
+	jwtRefreshSecretKey := configs.EnvConfigs.JWTRefreshToken
 	return jwtRefreshSecretKey
 }
 

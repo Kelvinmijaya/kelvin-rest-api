@@ -3,15 +3,13 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"time"
 
+	configs "github.com/Kelvinmijaya/kelvin-rest-api/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
-	"github.com/spf13/viper"
 
 	_articleHttpDelivery "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http"
 	_articleHttpDeliveryMiddleware "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http/middleware"
@@ -24,34 +22,18 @@ import (
 )
 
 func init() {
-	// Set viper path and read configuration
-	viper.SetConfigType("json")
-	viper.AddConfigPath("./conf")
-	if os.Getenv("ENV") == "PRODUCTION" {
-		viper.SetConfigName("production")
-	} else {
-		viper.SetConfigName("development")
-	}
-	err := viper.ReadInConfig()
-
-	// Handle errors reading the config file
-	if err != nil {
-		panic(err)
-	}
-
-	if viper.GetBool(`debug`) {
-		log.Println("Service RUN on DEBUG mode")
-	}
+	// Config ENV
+	configs.InitEnvConfigs()
 }
 
 func main() {
 	// DB Init
-	dbHost := viper.GetString(`database.host`)
-	dbPort := viper.GetString(`database.port`)
-	dbUser := viper.GetString(`database.user`)
-	dbPass := viper.GetString(`database.pass`)
-	dbName := viper.GetString(`database.name`)
-	dbSSLmode := viper.GetString(`database.sslmode`)
+	dbHost := configs.EnvConfigs.DBHost
+	dbPort := configs.EnvConfigs.DBPort
+	dbUser := configs.EnvConfigs.DBUser
+	dbPass := configs.EnvConfigs.DBPassword
+	dbName := configs.EnvConfigs.DBName
+	dbSSLmode := configs.EnvConfigs.DBSSLMode
 	fmt.Sprintln(dbName)
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		dbHost, dbPort, dbUser, dbPass, dbName, dbSSLmode)
@@ -76,7 +58,7 @@ func main() {
 	e.Use(middleware.Recover())
 	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
 	e.Use(middL.CORS)
-	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
+	timeoutContext := time.Duration(configs.EnvConfigs.Timeout) * time.Second
 
 	// Init Default
 	e.GET("/", func(c echo.Context) error {
@@ -99,10 +81,5 @@ func main() {
 	_userHttpDelivery.NewUserHandler(e, uu)
 
 	// Setup Server Address
-	httpPort := os.Getenv("PORT")
-	if httpPort == "" {
-		httpPort = "9090"
-	}
-
-	e.Logger.Fatal(e.Start(":" + httpPort))
+	e.Logger.Fatal(e.Start(":" + string(configs.EnvConfigs.Port)))
 }

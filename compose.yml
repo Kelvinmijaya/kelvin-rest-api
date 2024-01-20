@@ -4,7 +4,7 @@ services:
     image: kelvin-rest-api
     container_name: kelvin_rest_api
     ports:
-      - 9090:9090
+      - 8000:8080
     depends_on:
       - postgresdb
     volumes:
@@ -20,7 +20,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     ports:
-      - '5432:5432'
+      - '5430:5432'
     volumes:
       - ./pg_data:/var/lib/postgresql/data
     networks:
