@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 
@@ -26,9 +27,9 @@ func init() {
 	// Set viper path and read configuration
 	viper.AddConfigPath("./conf/")
 	if os.Getenv("ENV") == "PRODUCTION" {
-		viper.SetConfigFile("config.json")
+		viper.SetConfigFile("production.json")
 	} else {
-		viper.SetConfigFile("devconfig.json")
+		viper.SetConfigFile("development.json")
 	}
 	err := viper.ReadInConfig()
 
@@ -66,14 +67,25 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("DB Successfully connected!")
-
 	// Echo Framework
 	e := echo.New()
+
 	// Init Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
 	e.Use(middL.CORS)
 	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
+
+	// Init Default
+	e.GET("/", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, "Hello, World!")
+	})
+
+	// Health check
+	e.GET("/health", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
+	})
 
 	// Init Article
 	ar := _articleRepo.NewPostgresArticleRepository(db)
@@ -85,17 +97,11 @@ func main() {
 	uu := _userUsecase.NewUserUsecase(ur, timeoutContext)
 	_userHttpDelivery.NewUserHandler(e, uu)
 
-	//Init Default
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-
 	// Setup Server Address
-	serverAddr := os.Getenv("PORT")
-	if serverAddr == "" {
-		log.Fatal("$PORT must be set")
+	httpPort := os.Getenv("PORT")
+	if httpPort == "" {
+		httpPort = "9090"
 	}
 
-	e.Logger.Fatal(e.Start(":" + serverAddr))
-
+	e.Logger.Fatal(e.Start(":" + httpPort))
 }
