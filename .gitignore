@@ -3,3 +3,4 @@
 engine
 bin/
 .env
+pg_data

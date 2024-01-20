@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  web:
+    image: kelvin-rest-api
+    container_name: kelvin_rest_api
+    ports:
+      - 9090:9090
+    depends_on:
+      - postgresdb
+    volumes:
+      - .:/app
+
+  postgresdb:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      - DATABASE_HOST=${DB_HOST}
+      - DATABASE_PORT=${DB_PORT}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    networks:
+      - learning
+
+# Networks to be created to facilitate communication between containers
+networks:
+  learning:
+    driver: bridge
