@@ -1,32 +1,35 @@
 version: '3.9'
 services:
-  web:
-    image: kelvin-rest-api
-    container_name: kelvin_rest_api
+  postgresdb:
+    image: postgres:latest
+    container_name: postgres_container
     ports:
-      - 8000:8080
+      - '5432:5432'
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    networks:
+      - fullstack
+
+  web:
+    image: kelvin-rest-api:latest
+    container_name: kelvin_rest_api
+    build: .
+    ports:
+      - 8080:8080
+    restart: on-failure
     depends_on:
       - postgresdb
     volumes:
       - .:/app
-
-  postgresdb:
-    image: postgres:latest
-    container_name: postgres_container
-    environment:
-      - DATABASE_HOST=${DB_HOST}
-      - DATABASE_PORT=${DB_PORT}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-    ports:
-      - '5430:5432'
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
     networks:
-      - learning
+      - fullstack
 
 # Networks to be created to facilitate communication between containers
 networks:
-  learning:
+  fullstack:
     driver: bridge
