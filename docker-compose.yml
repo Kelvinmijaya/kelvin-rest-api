@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 services:
   postgresdb:
     image: postgres:latest
@@ -12,24 +12,20 @@ services:
       - POSTGRES_DB=${DB_NAME}
     volumes:
       - ./pg_data:/var/lib/postgresql/data
-    networks:
-      - fullstack
+    network_mode: bridge
 
-  web:
-    image: kelvin-rest-api:latest
-    container_name: kelvin_rest_api
+  api:
     build: .
+    container_name: kelvin_rest_api
     ports:
       - 8080:8080
+    env_file:
+      - .env
     restart: on-failure
     depends_on:
       - postgresdb
+    links:
+      - postgresdb
     volumes:
       - .:/app
-    networks:
-      - fullstack
-
-# Networks to be created to facilitate communication between containers
-networks:
-  fullstack:
-    driver: bridge
+    network_mode: bridge
