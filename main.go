@@ -28,8 +28,8 @@ func init() {
 
 func main() {
 	// DB Connection
-	psqlInfo := fmt.Sprintf("host=db user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Bangkok",
-		configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBName, configs.EnvConfigs.DBPort, configs.EnvConfigs.DBSSLMode)
+	psqlInfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Bangkok",
+		configs.EnvConfigs.DBHost, configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBName, configs.EnvConfigs.DBPort, configs.EnvConfigs.DBSSLMode)
 
 	db, err := sql.Open("postgres", psqlInfo)
 
