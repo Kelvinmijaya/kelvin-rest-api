@@ -42,7 +42,7 @@ func main() {
 	}
 
 	// Connect to the Cloud SQL database
-	db, err := sql.Open("postgres", connectionString)
+	db, err := sql.Open(dbConn, connectionString)
 	if err != nil {
 		panic(err)
 	}
