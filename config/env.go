@@ -21,12 +21,7 @@ type envConfigs struct {
 	Timeout         int    `mapstructure:"TIMEOUT"`
 	JWTSecret       string `mapstructure:"JWT_SECRET"`
 	JWTRefreshToken string `mapstructure:"JWT_REFRESH_SECRET"`
-	DBHost          string `mapstructure:"DB_HOST"`
-	DBPort          string `mapstructure:"DB_PORT"`
-	DBUser          string `mapstructure:"DB_USER"`
-	DBPassword      string `mapstructure:"DB_PASSWORD"`
-	DBName          string `mapstructure:"DB_NAME"`
-	DBSSLMode       string `mapstructure:"DB_SSLMODE"`
+	DBUrl           string `mapstructure:"DATABASE_URL"`
 }
 
 // Call to load the variables from env

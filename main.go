@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -28,10 +27,7 @@ func init() {
 
 func main() {
 	// DB Connection
-	psqlInfo := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBHost, configs.EnvConfigs.DBPort, configs.EnvConfigs.DBName, configs.EnvConfigs.DBSSLMode)
-
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", configs.EnvConfigs.DBUrl)
 
 	if err != nil {
 		panic(err)

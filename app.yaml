@@ -1,0 +1,12 @@
+runtime: custom
+env: flex
+
+manual_scaling:
+  instances: 1
+
+env_variables:
+  DATABASE_URL: 'postgres://yourdbuser:yourdbpassword@/yourdbname?host=/cloudsql/your-gcp-project:your-region:your-db-instance'
+
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  target_throughput_utilization: 0.7
