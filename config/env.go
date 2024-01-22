@@ -29,14 +29,13 @@ func InitEnvConfigs() {
 // Call to load the variables from env
 func loadEnvVariables() (config *envConfigs) {
 	env := "DEVELOPMENT"
-	if envOS := os.Getenv("GAE_ENV"); envOS != "" {
+	if envOS := os.Getenv("ENV"); envOS != "" {
 		env = envOS
 		fmt.Println(envOS)
 	}
 
 	if env == "PRODUCTION" {
-		viper.AutomaticEnv()       // Read environment variables automatically
-		viper.SetEnvPrefix("GAE_") // Set a prefix for App Engine environment variables
+		viper.AutomaticEnv() // Read environment variables automatically
 
 	} else {
 		// Tell viper the path/location of your env file. If it is root just add "."
