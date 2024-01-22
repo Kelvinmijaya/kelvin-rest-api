@@ -7,9 +7,9 @@ import (
 	"time"
 
 	configs "github.com/Kelvinmijaya/kelvin-rest-api/config"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	_ "github.com/lib/pq"
 
 	_articleHttpDelivery "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http"
 	_articleHttpDeliveryMiddleware "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http/middleware"
@@ -28,9 +28,20 @@ func init() {
 
 func main() {
 	// DB Connection
-	db, err := sql.Open("postgres", configs.EnvConfigs.DBUrl)
-	fmt.Println(configs.EnvConfigs.DBUrl)
+	fmt.Println(configs.EnvConfigs)
+	// Construct the full connection string
+	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		configs.EnvConfigs.DBHost, configs.EnvConfigs.DBPort, configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBName, configs.EnvConfigs.DBssl)
+	dbConn := "postgres"
+	// Override for production
+	if configs.EnvConfigs.Environtment == "PRODUCTION" {
+		connectionString = fmt.Sprintf("user=%s password=%s database=%s host=%s",
+			configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBName, configs.EnvConfigs.UnixSocket)
+		dbConn = "pgx"
+	}
 
+	// Connect to the Cloud SQL database
+	db, err := sql.Open(dbConn, connectionString)
 	if err != nil {
 		panic(err)
 	}

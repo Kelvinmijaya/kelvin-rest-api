@@ -1,0 +1,18 @@
+runtime: custom
+env: flex
+
+env_variables:
+  INSTANCE_UNIX_SOCKET: '/cloudsql/kelvin-web-api:us-central1:web-api-postgres'
+  DB_HOST: '34.172.29.42'
+  DB_PORT: '5432'
+  DB_USER: 'web-api-postgres'
+  DB_PASS: 'Generate92!'
+  DB_NAME: 'web_api'
+  DB_SSL: 'disable'
+  ENV: 'PRODUCTION'
+  TIMEOUT: 2
+  JWT_SECRET: 'lovetika3623'
+  JWT_REFRESH_SECRET: 'lovemijay3623'
+
+beta_settings:
+  cloud_sql_instances: 'kelvin-web-api:us-central1:web-api-postgres'

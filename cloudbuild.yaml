@@ -1,7 +1,7 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     script: |
-      docker build -t us-central1-docker.pkg.dev/kelvin-web-api/docker-repo/web-api-image:v1 .
+      docker build -t us-central1-docker.pkg.dev/kelvin-web-api/docker-repo/web-api-image:v1.0.1 .
     automapSubstitutions: true
 images:
-  - 'us-central1-docker.pkg.dev/kelvin-web-api/docker-repo/web-api-image:v1'
+  - 'us-central1-docker.pkg.dev/kelvin-web-api/docker-repo/web-api-image:v1.0.1'
