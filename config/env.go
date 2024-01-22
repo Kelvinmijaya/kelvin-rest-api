@@ -1,19 +1,12 @@
 package configs
 
 import (
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/spf13/viper"
 )
-
-// Initilize this variable to access the env values
-var EnvConfigs *envConfigs
-
-// We will call this in main.go to load the env variables
-func InitEnvConfigs() {
-	EnvConfigs = loadEnvVariables()
-}
 
 // struct to map env values
 type envConfigs struct {
@@ -25,11 +18,20 @@ type envConfigs struct {
 	DBUrl           string `mapstructure:"DATABASE_URL"`
 }
 
+// Initilize this variable to access the env values
+var EnvConfigs *envConfigs
+
+// We will call this in main.go to load the env variables
+func InitEnvConfigs() {
+	EnvConfigs = loadEnvVariables()
+}
+
 // Call to load the variables from env
 func loadEnvVariables() (config *envConfigs) {
-	env := "PRODUCTION"
-	if envOS := os.Getenv("ENV"); envOS != "" {
+	env := "DEVELOPMENT"
+	if envOS := os.Getenv("GAE_ENV"); envOS != "" {
 		env = envOS
+		fmt.Println(envOS)
 	}
 
 	if env == "PRODUCTION" {
@@ -50,11 +52,11 @@ func loadEnvVariables() (config *envConfigs) {
 		if err := viper.ReadInConfig(); err != nil {
 			log.Fatal("Error reading env file", err)
 		}
+	}
 
-		// Viper unmarshals the loaded env varialbes into the struct
-		if err := viper.Unmarshal(&config); err != nil {
-			log.Fatal(err)
-		}
+	// Viper unmarshals the loaded env varialbes into the struct
+	if err := viper.Unmarshal(&config); err != nil {
+		log.Fatal(err)
 	}
 
 	return
