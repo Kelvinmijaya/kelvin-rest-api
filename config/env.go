@@ -2,6 +2,7 @@ package configs
 
 import (
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -26,23 +27,35 @@ type envConfigs struct {
 
 // Call to load the variables from env
 func loadEnvVariables() (config *envConfigs) {
-	// Tell viper the path/location of your env file. If it is root just add "."
-	viper.AddConfigPath(".")
-
-	// Tell viper the name of your file
-	viper.SetConfigFile(".env")
-
-	// Tell viper the type of your file
-	viper.SetConfigType("env")
-
-	// Viper reads all the variables from env file and log error if any found
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal("Error reading env file", err)
+	env := "PRODUCTION"
+	if envOS := os.Getenv("ENV"); envOS != "" {
+		env = envOS
 	}
 
-	// Viper unmarshals the loaded env varialbes into the struct
-	if err := viper.Unmarshal(&config); err != nil {
-		log.Fatal(err)
+	if env == "PRODUCTION" {
+		viper.AutomaticEnv()       // Read environment variables automatically
+		viper.SetEnvPrefix("GAE_") // Set a prefix for App Engine environment variables
+
+	} else {
+		// Tell viper the path/location of your env file. If it is root just add "."
+		viper.AddConfigPath(".")
+
+		// Tell viper the name of your file
+		viper.SetConfigFile(".env")
+
+		// Tell viper the type of your file
+		viper.SetConfigType("env")
+
+		// Viper reads all the variables from env file and log error if any found
+		if err := viper.ReadInConfig(); err != nil {
+			log.Fatal("Error reading env file", err)
+		}
+
+		// Viper unmarshals the loaded env varialbes into the struct
+		if err := viper.Unmarshal(&config); err != nil {
+			log.Fatal(err)
+		}
 	}
+
 	return
 }
