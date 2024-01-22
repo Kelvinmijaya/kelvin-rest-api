@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -15,7 +14,7 @@ type envConfigs struct {
 	Timeout         int    `mapstructure:"TIMEOUT"`
 	JWTSecret       string `mapstructure:"JWT_SECRET"`
 	JWTRefreshToken string `mapstructure:"JWT_REFRESH_SECRET"`
-	DBUrl           string `mapstructure:"DATABASE_URL"`
+	DBUrl           string `mapstructure:"DB_URL"`
 }
 
 // Initilize this variable to access the env values
@@ -31,7 +30,6 @@ func loadEnvVariables() (config *envConfigs) {
 	env := "DEVELOPMENT"
 	if envOS := os.Getenv("ENV"); envOS != "" {
 		env = envOS
-		fmt.Println(envOS)
 	}
 
 	if env == "PRODUCTION" {

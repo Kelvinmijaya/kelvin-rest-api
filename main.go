@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -28,6 +29,7 @@ func init() {
 func main() {
 	// DB Connection
 	db, err := sql.Open("postgres", configs.EnvConfigs.DBUrl)
+	fmt.Println(configs.EnvConfigs.DBUrl)
 
 	if err != nil {
 		panic(err)
