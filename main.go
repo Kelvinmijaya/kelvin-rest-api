@@ -10,6 +10,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	_ "github.com/lib/pq"
 
 	_articleHttpDelivery "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http"
 	_articleHttpDeliveryMiddleware "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http/middleware"
@@ -41,7 +42,7 @@ func main() {
 	}
 
 	// Connect to the Cloud SQL database
-	db, err := sql.Open(dbConn, connectionString)
+	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		panic(err)
 	}
