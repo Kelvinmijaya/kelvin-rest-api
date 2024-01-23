@@ -36,8 +36,8 @@ func main() {
 	dbConn := "postgres"
 	// Override for production
 	if configs.EnvConfigs.Environtment == "PRODUCTION" {
-		connectionString = fmt.Sprintf("user=%s password=%s database=%s host=%s",
-			configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBName, configs.EnvConfigs.UnixSocket)
+		connectionString = fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s",
+			configs.EnvConfigs.DBTCPHost, configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBPort, configs.EnvConfigs.DBName)
 		dbConn = "pgx"
 	}
 

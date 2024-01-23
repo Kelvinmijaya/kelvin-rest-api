@@ -15,6 +15,7 @@ type envConfigs struct {
 	JWTSecret       string `mapstructure:"JWT_SECRET"`
 	JWTRefreshToken string `mapstructure:"JWT_REFRESH_SECRET"`
 	UnixSocket      string `mapstructure:"INSTANCE_UNIX_SOCKET"`
+	DBTCPHost       string `mapstructure:"INSTANCE_HOST"`
 	DBHost          string `mapstructure:"DB_HOST"`
 	DBPort          string `mapstructure:"DB_PORT"`
 	DBUser          string `mapstructure:"DB_USER"`
