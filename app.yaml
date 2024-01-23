@@ -1,6 +1,9 @@
-runtime: custom
-env: flex
+runtime: go
+runtime_config:
+  operating_system: 'ubuntu22'
+  runtime_version: '1.21'
 
+env: flex
 env_variables:
   INSTANCE_UNIX_SOCKET: '/cloudsql/kelvin-web-api:us-central1:web-api-postgres'
   DB_PORT: '5432'
@@ -18,3 +21,10 @@ network:
 
 beta_settings:
   cloud_sql_instances: 'kelvin-web-api:us-central1:web-api-postgres'
+
+liveness_check:
+  path: '/health'
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 2
+  success_threshold: 2

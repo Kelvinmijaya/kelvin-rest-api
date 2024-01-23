@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -30,6 +31,7 @@ var EnvConfigs *envConfigs
 // We will call this in main.go to load the env variables
 func InitEnvConfigs() {
 	EnvConfigs = loadEnvVariables()
+	fmt.Println(EnvConfigs)
 }
 
 // Call to load the variables from env
