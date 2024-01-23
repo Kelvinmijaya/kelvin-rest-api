@@ -29,20 +29,12 @@ func init() {
 
 func main() {
 	// DB Connection
-	fmt.Println(configs.EnvConfigs)
 	// Construct the full connection string
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		configs.EnvConfigs.DBHost, configs.EnvConfigs.DBPort, configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBName, configs.EnvConfigs.DBssl)
-	dbConn := "postgres"
-	// Override for production
-	if configs.EnvConfigs.Environtment == "PRODUCTION" {
-		connectionString = fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s",
-			configs.EnvConfigs.DBTCPHost, configs.EnvConfigs.DBUser, configs.EnvConfigs.DBPassword, configs.EnvConfigs.DBPort, configs.EnvConfigs.DBName)
-		dbConn = "pgx"
-	}
 
 	// Connect to the Cloud SQL database
-	db, err := sql.Open(dbConn, connectionString)
+	db, err := sql.Open("pgx", connectionString)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +49,6 @@ func main() {
 	e := echo.New()
 
 	// Init Middleware
-	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
 	e.Use(middL.CORS)

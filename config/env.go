@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -15,8 +14,6 @@ type envConfigs struct {
 	Timeout         int    `mapstructure:"TIMEOUT"`
 	JWTSecret       string `mapstructure:"JWT_SECRET"`
 	JWTRefreshToken string `mapstructure:"JWT_REFRESH_SECRET"`
-	UnixSocket      string `mapstructure:"INSTANCE_UNIX_SOCKET"`
-	DBTCPHost       string `mapstructure:"INSTANCE_HOST"`
 	DBHost          string `mapstructure:"DB_HOST"`
 	DBPort          string `mapstructure:"DB_PORT"`
 	DBUser          string `mapstructure:"DB_USER"`
@@ -31,37 +28,49 @@ var EnvConfigs *envConfigs
 // We will call this in main.go to load the env variables
 func InitEnvConfigs() {
 	EnvConfigs = loadEnvVariables()
-	fmt.Println(EnvConfigs)
 }
 
 // Call to load the variables from env
 func loadEnvVariables() (config *envConfigs) {
+	v := viper.New()
 	env := "DEVELOPMENT"
 	if envOS := os.Getenv("ENV"); envOS != "" {
 		env = envOS
 	}
 
 	if env == "PRODUCTION" {
-		viper.AutomaticEnv() // Read environment variables automatically
+		v.AutomaticEnv() // Read environment variables automatically
+
+		v.BindEnv("ENV")
+		v.BindEnv("PORT")
+		v.BindEnv("TIMEOUT")
+		v.BindEnv("JWT_SECRET")
+		v.BindEnv("JWT_REFRESH_SECRET")
+		v.BindEnv("DB_HOST")
+		v.BindEnv("DB_PORT")
+		v.BindEnv("DB_USER")
+		v.BindEnv("DB_PASS")
+		v.BindEnv("DB_NAME")
+		v.BindEnv("DB_SSL")
 
 	} else {
 		// Tell viper the path/location of your env file. If it is root just add "."
-		viper.AddConfigPath(".")
+		v.AddConfigPath(".")
 
 		// Tell viper the name of your file
-		viper.SetConfigFile(".env")
+		v.SetConfigFile(".env")
 
 		// Tell viper the type of your file
-		viper.SetConfigType("env")
+		v.SetConfigType("env")
 
 		// Viper reads all the variables from env file and log error if any found
-		if err := viper.ReadInConfig(); err != nil {
+		if err := v.ReadInConfig(); err != nil {
 			log.Fatal("Error reading env file", err)
 		}
 	}
 
 	// Viper unmarshals the loaded env varialbes into the struct
-	if err := viper.Unmarshal(&config); err != nil {
+	if err := v.Unmarshal(&config); err != nil {
 		log.Fatal(err)
 	}
 
