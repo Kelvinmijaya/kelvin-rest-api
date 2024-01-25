@@ -15,8 +15,11 @@ services:
     network_mode: bridge
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.development
     container_name: kelvin_rest_api
+    command: air
     ports:
       - 8080:8080
     env_file:
@@ -27,5 +30,5 @@ services:
     links:
       - db
     volumes:
-      - .:/app
+      - ./:/app
     network_mode: bridge

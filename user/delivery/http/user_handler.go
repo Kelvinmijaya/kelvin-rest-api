@@ -42,6 +42,11 @@ func (a *UserHandler) Login(c echo.Context) (err error) {
 	password := c.FormValue("password")
 	ctx := c.Request().Context()
 
+	//TODO for register logic
+	// generate Hash
+	// bytes, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	// fmt.Println(string(bytes))
+
 	// Usecase Login
 	err = a.UUsecase.Login(ctx, email, password, &user)
 
