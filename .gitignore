@@ -3,3 +3,7 @@ engine
 bin/
 .env
 pg_data
+_*
+*.test
+*.out
+tmp/build-errors.log

@@ -13,7 +13,6 @@ import (
 	_ "github.com/lib/pq"
 
 	_articleHttpDelivery "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http"
-	_articleHttpDeliveryMiddleware "github.com/Kelvinmijaya/kelvin-rest-api/article/delivery/http/middleware"
 	_articleRepo "github.com/Kelvinmijaya/kelvin-rest-api/article/repository/postgres"
 	_articleUsecase "github.com/Kelvinmijaya/kelvin-rest-api/article/usecase"
 
@@ -47,15 +46,24 @@ func main() {
 
 	// Echo Framework
 	e := echo.New()
-
 	// Init Middleware
 	e.Use(middleware.Recover())
-	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
-	e.Use(middL.CORS)
+	e.Use(middleware.Logger())
+	// CORS middleware
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080"}, // Replace with your frontend URL
+		AllowCredentials: true,
+	}))
 	timeoutContext := time.Duration(configs.EnvConfigs.Timeout) * time.Second
 
 	// Init Default
 	e.GET("/", func(c echo.Context) error {
+		cookie, err := c.Cookie("access-token")
+		if err != nil {
+			return err
+		}
+		fmt.Println(cookie.Name)
+		fmt.Println(cookie.Value)
 		return c.HTML(http.StatusOK, "Hello, World!")
 	})
 

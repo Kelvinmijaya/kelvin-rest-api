@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -40,6 +41,12 @@ func GetJWTMiddlewareConfig() echojwt.Config {
 		SigningKey:  []byte(GetJWTSecret()),
 		TokenLookup: "cookie:" + accessTokenCookieName, // "<source>:<name>"
 		ErrorHandler: func(c echo.Context, err error) error {
+			cookie, errs := c.Cookie("access-token")
+			if errs != nil {
+				return errs
+			}
+			fmt.Println(cookie.Name)
+			fmt.Println(cookie.Value)
 			return echo.NewHTTPError(http.StatusUnauthorized, "Please provide valid credentials")
 		},
 	}

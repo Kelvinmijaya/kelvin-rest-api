@@ -21,17 +21,17 @@ func NewUserUsecase(a domain.UserRepository, timeout time.Duration) domain.UserU
 	}
 }
 
-func (u *userUsecase) Login(c context.Context, email string, password string, m *domain.User) (err error) {
+func (u *userUsecase) Login(c context.Context, m *domain.User) (err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
 	// check valid email and password
 	var ok bool
-	if ok, err = loginValidator(email, password); !ok {
+	if ok, err = loginValidator(m); !ok {
 		return err
 	}
 
-	err = u.userRepo.Login(ctx, email, password, m)
+	err = u.userRepo.Login(ctx, m)
 	if err != nil {
 		return err
 	}
@@ -39,13 +39,13 @@ func (u *userUsecase) Login(c context.Context, email string, password string, m 
 	return
 }
 
-func loginValidator(email string, password string) (bool, error) {
-	_, err := mail.ParseAddress(email)
+func loginValidator(m *domain.User) (bool, error) {
+	_, err := mail.ParseAddress(m.Email)
 	if err != nil {
 		return false, errors.New("email is not valid")
 	}
 
-	if len([]rune(password)) < 4 {
+	if len([]rune(m.Password)) < 4 {
 		return false, errors.New("password minimum 4 character")
 	}
 	return true, nil

@@ -5,6 +5,7 @@ import (
 
 	"github.com/Kelvinmijaya/kelvin-rest-api/domain"
 	auth "github.com/Kelvinmijaya/kelvin-rest-api/user/delivery/http/middleware"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -26,6 +27,12 @@ func NewUserHandler(e *echo.Echo, uu domain.UserUsecase) {
 		UUsecase: uu,
 	}
 
+	r := e.Group("/auth")
+	// Restricted group
+	r.Use(echojwt.WithConfig(auth.GetJWTMiddlewareConfig()))
+	r.Use(auth.TokenRefresherMiddleware)
+	r.GET("", handler.Auth)
+
 	e.POST("/login", handler.Login)
 	e.POST("/logout", handler.Logout)
 }
@@ -38,8 +45,6 @@ func (a *UserHandler) Login(c echo.Context) (err error) {
 		return c.JSON(http.StatusUnprocessableEntity, err.Error())
 	}
 
-	email := c.FormValue("email")
-	password := c.FormValue("password")
 	ctx := c.Request().Context()
 
 	//TODO for register logic
@@ -48,7 +53,7 @@ func (a *UserHandler) Login(c echo.Context) (err error) {
 	// fmt.Println(string(bytes))
 
 	// Usecase Login
-	err = a.UUsecase.Login(ctx, email, password, &user)
+	err = a.UUsecase.Login(ctx, &user)
 
 	if err != nil {
 		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
@@ -61,6 +66,12 @@ func (a *UserHandler) Login(c echo.Context) (err error) {
 	}
 
 	return c.JSON(http.StatusOK, ResponseSuccess{Message: "Success Sign in!"})
+}
+
+// Login will try to check the user is valid or not
+func (a *UserHandler) Auth(c echo.Context) (err error) {
+
+	return c.JSON(http.StatusOK, ResponseSuccess{Message: "Authorized"})
 }
 
 func (a *UserHandler) Logout(c echo.Context) (err error) {
