@@ -46,24 +46,19 @@ func main() {
 
 	// Echo Framework
 	e := echo.New()
+
 	// Init Middleware
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080"}, // Replace with your frontend URL
+		AllowOrigins:     []string{configs.EnvConfigs.AllowedOrigins},
 		AllowCredentials: true,
 	}))
 	timeoutContext := time.Duration(configs.EnvConfigs.Timeout) * time.Second
 
 	// Init Default
 	e.GET("/", func(c echo.Context) error {
-		cookie, err := c.Cookie("access-token")
-		if err != nil {
-			return err
-		}
-		fmt.Println(cookie.Name)
-		fmt.Println(cookie.Value)
 		return c.HTML(http.StatusOK, "Hello, World!")
 	})
 

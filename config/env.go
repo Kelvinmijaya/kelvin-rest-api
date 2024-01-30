@@ -12,6 +12,7 @@ type envConfigs struct {
 	Environtment    string `mapstructure:"ENV"`
 	Port            string `mapstructure:"PORT"`
 	Timeout         int    `mapstructure:"TIMEOUT"`
+	AllowedOrigins  string `mapstructure:"ALLOWED_ORIGINS"`
 	JWTSecret       string `mapstructure:"JWT_SECRET"`
 	JWTRefreshToken string `mapstructure:"JWT_REFRESH_SECRET"`
 	DBHost          string `mapstructure:"DB_HOST"`
@@ -44,6 +45,7 @@ func loadEnvVariables() (config *envConfigs) {
 		v.BindEnv("ENV")
 		v.BindEnv("PORT")
 		v.BindEnv("TIMEOUT")
+		v.BindEnv("ALLOWED_ORIGINS")
 		v.BindEnv("JWT_SECRET")
 		v.BindEnv("JWT_REFRESH_SECRET")
 		v.BindEnv("DB_HOST")

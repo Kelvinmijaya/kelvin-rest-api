@@ -3,10 +3,15 @@ runtime_config:
   operating_system: 'ubuntu22'
   runtime_version: '1.21'
 
+instance_class: B1
+manual_scaling:
+  instances: 1
+
 env: flex
 env_variables:
   ENV: 'PRODUCTION'
   TIMEOUT: 2
+  ALLOWED_ORIGINS: 'https://www.kelvinmijaya.com'
   JWT_SECRET: 'lovetika3623'
   JWT_REFRESH_SECRET: 'lovemijay3623'
   DB_HOST: '10.61.112.3'
