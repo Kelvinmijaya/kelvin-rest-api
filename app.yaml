@@ -12,6 +12,7 @@ env_variables:
   ENV: 'PRODUCTION'
   TIMEOUT: 2
   ALLOWED_ORIGINS: 'https://www.kelvinmijaya.com'
+  DOMAIN: 'kelvinmijaya.com'
   JWT_SECRET: 'lovetika3623'
   JWT_REFRESH_SECRET: 'lovemijay3623'
   DB_HOST: '10.61.112.3'

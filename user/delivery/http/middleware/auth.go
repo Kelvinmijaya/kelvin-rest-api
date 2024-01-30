@@ -129,6 +129,7 @@ func generateToken(us *domain.User, expirationTime time.Time, secret []byte) (st
 func setTokenCookie(name, token string, expiration time.Time, c echo.Context) {
 	cookie := new(http.Cookie)
 	cookie.Name = name
+	cookie.Domain = configs.EnvConfigs.Domain
 	cookie.Value = token
 	cookie.Expires = expiration
 	cookie.Path = "/"

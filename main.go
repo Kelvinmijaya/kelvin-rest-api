@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	configs "github.com/Kelvinmijaya/kelvin-rest-api/config"
@@ -49,7 +50,14 @@ func main() {
 
 	// Init Middleware
 	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
+	env := "DEVELOPMENT"
+	if envOS := os.Getenv("ENV"); envOS != "" {
+		env = envOS
+	}
+	if env == "DEVELOPMENT" {
+		e.Use(middleware.Logger())
+	}
+
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{configs.EnvConfigs.AllowedOrigins},
