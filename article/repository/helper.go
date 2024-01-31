@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	timeFormat = "2006-01-02T15:04:05.999Z07:00" // reduce precision from RFC3339Nano as date format
+	timeFormat = "2006-01-02T15:04:05.999999Z00:00" // reduce precision from RFC3339Nano as date format
 )
 
 // DecodeCursor will decode cursor from user for mysql

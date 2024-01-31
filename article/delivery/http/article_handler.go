@@ -21,6 +21,11 @@ type ResponseSuccess struct {
 	Message string `json:"message"`
 }
 
+type ResponseArticleList struct {
+	Data       []domain.Article `json:"data"`
+	NextCursor string           `json:"nextCursor"`
+}
+
 // ArticleHandler  represent the httphandler for article
 type ArticleHandler struct {
 	AUsecase domain.ArticleUsecase
@@ -56,8 +61,7 @@ func (a *ArticleHandler) FetchArticle(c echo.Context) error {
 		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
 	}
 
-	c.Response().Header().Set(`X-Cursor`, nextCursor)
-	return c.JSON(http.StatusOK, listAr)
+	return c.JSON(http.StatusOK, ResponseArticleList{Data: listAr, NextCursor: nextCursor})
 }
 
 // GetByID will get article by given id
