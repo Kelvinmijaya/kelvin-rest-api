@@ -60,7 +60,7 @@ func (m *postgresArticleRepository) fetch(ctx context.Context, query string, arg
 
 func (m *postgresArticleRepository) Fetch(ctx context.Context, cursor string, num int64) (res []domain.Article, nextCursor string, err error) {
 	query := `SELECT id, title, url, content, type, updated_at, created_at
-  						FROM article WHERE created_at > $1 ORDER BY created_at LIMIT $2 `
+  						FROM article WHERE created_at < $1 ORDER BY created_at DESC LIMIT $2 `
 
 	decodedCursor, err := repository.DecodeCursor(cursor)
 	if err != nil && cursor != "" {

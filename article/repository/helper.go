@@ -15,8 +15,10 @@ func DecodeCursor(encodedTime string) (time.Time, error) {
 	if err != nil {
 		return time.Time{}, err
 	}
-
 	timeString := string(byt)
+	if len(encodedTime) == 0 {
+		timeString = time.Now().Format(timeFormat)
+	}
 	t, err := time.Parse(timeFormat, timeString)
 
 	return t, err
