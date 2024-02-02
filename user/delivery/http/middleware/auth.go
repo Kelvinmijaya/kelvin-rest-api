@@ -58,6 +58,7 @@ func GetJWTMiddlewareConfig() echojwt.Config {
 func LogoutTokenSetCookies(c echo.Context) (bool, error) {
 	cookie := new(http.Cookie)
 	cookie.Name = accessTokenCookieName
+	cookie.Domain = configs.EnvConfigs.Domain
 	cookie.Value = ""
 	cookie.MaxAge = -1
 	cookie.Path = "/"
